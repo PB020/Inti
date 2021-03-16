@@ -20,5 +20,5 @@ class Inti:
         """
         Returns JSON string of the block's hash
         """
-        block_string = json.dump(self.__dict__, sort_keys=True)
+        block_string = json.dumps(self.__dict__, sort_keys=True)
         return sha256(block_string.encode()).hexdigest()

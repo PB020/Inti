@@ -1,4 +1,4 @@
-import Inti
+from . import Inti
 import json
 import time
 
