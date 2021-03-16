@@ -13,6 +13,7 @@ class Blockchain:
         """
         self.chain = []
         self.genesis()
+        self.unconfirmed_transactions = []
 
     def genesis(self) -> None:
         """
@@ -28,6 +29,20 @@ class Blockchain:
         Retrieves the most recent block in the chain
         """
         return self.chain[-1]
+
+    def proof_of_work(self, block: Inti.Inti) -> str:
+        """
+        Tries different values of the nonce to get a hash that
+        satisfies the difficulty criteria
+        """
+        block.nonce = 0
+
+        computed_hash = block.compute_hash()
+        while not computed_hash.startswith('0' * Blockchain.difficulty):
+            block.nonce += 1
+            computed_hash = block.compute_hash()
+
+        return computed_hash
 
     def proof_validation(self, block: Inti.Inti, block_hash: str) -> bool:
         """
@@ -53,16 +68,26 @@ class Blockchain:
         self.chain.append(block)
         return True
 
-    def proof_of_work(self, block: Inti.Inti) -> str:
+    def add_new_transaction(self, transaction: str) -> None:
         """
-        Tries different values of the nonce to get a hash that
-        satisfies the difficulty criteria
+        Adds new transactions to the blockchain's unconfirmed list
         """
-        block.nonce = 0
+        self.unconfirmed_transactions.append(transaction)
 
-        computed_hash = block.compute_hash()
-        while not computed_hash.startswith('0' * Blockchain.difficulty):
-            block.nonce += 1
-            computed_hash = block.compute_hash()
+    def mine(self) -> int:
+        """
+        Interface to add pending transactions to the blockchain
+        """
+        if not self.unconfirmed_transactions:
+            return False
 
-        return computed_hash
+        last_block = self.last_block
+        new_block = Inti.Inti(index=last_block.index + 1,
+                              transactions=self.unconfirmed_transactions,
+                              timestamp=time.time(),
+                              previous_hash=last_block.hash)
+
+        proof = self.proof_of_work(new_block)
+        self.add_block(new_block, proof)
+        self.unconfirmed_transactions = []
+        return new_block.index
