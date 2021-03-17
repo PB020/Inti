@@ -91,3 +91,22 @@ class Blockchain:
         self.add_block(new_block, proof)
         self.unconfirmed_transactions = []
         return new_block.index
+
+    def check_chain_validity(cls, chain: Blockchain) -> bool:
+        """
+        Checks if the entire blockchain is valid
+        """
+        result = True
+        previous_hash = "0"
+
+        for block in chain:
+            block_hash = block.hash
+            delattr(block, "hash")
+
+            if not cls.proof_validation(block, block.hash) or previous_hash != block.previous_hash:
+                result = False
+                break
+
+            block.hash, previous_hash = block_hash, block_hash
+
+        return result
