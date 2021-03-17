@@ -175,3 +175,6 @@ def consensus() -> bool:
         return True
 
     return False
+
+
+app.run(debug=True, port=8080)
