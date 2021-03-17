@@ -92,7 +92,7 @@ class Blockchain:
         self.unconfirmed_transactions = []
         return new_block.index
 
-    def check_chain_validity(cls, chain: Blockchain) -> bool:
+    def check_chain_validity(cls, chain) -> bool:
         """
         Checks if the entire blockchain is valid
         """
